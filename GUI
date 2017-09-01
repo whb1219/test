@@ -70,8 +70,7 @@ public class Gui extends JPanel {
 	JTable table_db2 ;
 	Object[][] tableData;
 	TableModel DTM;
-	
-	
+		
 	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	static Dimension size = new Dimension (1280,800); //frame size
 	JTextField field;						//textfield
