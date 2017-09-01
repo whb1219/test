@@ -1,0 +1,1111 @@
+package algorism4;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+import com.bluewalrus.pie.PieChart;
+import com.bluewalrus.pie.Segment;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+
+public class Gui extends JPanel {
+	/*
+	 create a CUI with frame, panels, labels, droplists, text fields and buttons 
+	 create action to read date and calcualte and generate results base on data read
+	 */
+	private static final long serialVersionUID = 1L;
+	static JTabbedPane tp	= new JTabbedPane();	//main tab panel
+	JTabbedPane tp0	= new JTabbedPane();	//sub tab panel
+	static JFrame frame, frame1,frame2,frame_db ;
+	static JPanel 	panel_m,	panel, 				
+	panel0, panel0_0, 
+	panel1, panel1_0, 
+			panel1_1, 
+			panel1_2, 
+	panel2, panel2_0, 
+	panel3,	panel3_0, 
+	panel4,	panel4_0,
+	panel5,
+	panel_chart1, panel_chart2, panel_db;									//all panels
+	
+	JTable table_db1 ;
+	JTable table_db2 ;
+	Object[][] tableData;
+	TableModel DTM;
+	
+	
+	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	static Dimension size = new Dimension (1280,800); //frame size
+	JTextField field;						//textfield
+	JComboBox<String> cb;					//combobox = droplist
+	JComboBox<String>[] cb_m;	
+	JComboBox<String> cbtest;
+	int i = 0;
+	int j = 0;//initialize "i"
+	double num0_0, num0_1, num0_2,num0_3,num0_4, 
+	num1_0_0, num1_0_1, num1_0_2, num1_0_3, num1_0_4, num1_0_5, 
+	num1_1_0, num1_1_1,
+	num1_2_0, num1_2_1,	num1_2_2, num1_2_3,	num1_2_4, 
+	num2_0, num2_1, num2_2, num2_3, num2_4, num2_5, 
+	num3_0, num3_1, num3_2,	num3_3,	num3_4,	
+	num4_0,	num4_1,	num4_2,	num4_3;
+	
+//define all the strings based on phases and activities	
+	public String data0, data1, data2,data3,data4,data5,data6;
+
+	String [] Phase = {"Design", "C_H","C_M","C_A","Operation","Maintenance","Scrapping"};
+	String [] Design = {"Life Span", "Present Value","Labour", "Classification", "Expertise"};
+	String [] C_H = {"Purchase", "Cutting", "Bending", "Welding", "Coating", "Outfitting"};
+	String [] C_M = {"Purchase", "Installation"};
+	String [] C_A = {"Purchase", "Cutting", "Welding", "Coating", "Outfitting"};
+	String [] Operation = {"Fuel", "Lub", "Insurance", "Crew", "Port","Administration"};
+	String [] Maintenance = {"Preventive", "Corrective", "Docking", "Labour", "Spare"};
+	String [] Scrapping = {"Transport", "Recycle", "Disposal", "Dismantling"};
+	
+	//String [] add;
+	int length = Design.length+C_H.length+C_M.length+C_A.length+Operation.length+Maintenance.length+Scrapping.length;
+	
+	File[] add = new File[7] ;
+	Workbook [] wb = new Workbook[add.length];
+	Sheet[] sheet = new Sheet[add.length];
+	Cell[]	cell0  = new Cell[add.length];
+	Cell[]	cell1  = new Cell[add.length];
+	Cell[]	cell2  = new Cell[add.length];
+	Cell[]	cell3  = new Cell[add.length];
+	Cell[]	cell4  = new Cell[add.length];
+	Cell[]	cell5  = new Cell[add.length];
+	Cell[]	cell6  = new Cell[add.length];
+	
+	String[]content0  = new String[add.length];
+	String[]c1  = new String[add.length];
+	String[]c2  = new String[add.length];
+	String[]c3  = new String[add.length];
+	String[]c4  = new String[add.length];
+	String[]c5  = new String[add.length];
+	String[]c6  = new String[add.length];
+	
+	String[] choices = new String[add.length];
+	Object[][] data;
+	String[] data_m = new String[7];
+	
+	String[][] data_mm= new String[7][33];
+	ActionListener[] db0 = new ActionListener[Design.length];
+	
+//construction function
+	@SuppressWarnings("unchecked")
+	public Gui() throws BiffException, IOException{
+		
+		System.out.println(add.length);
+		
+		add[	0	]=	new File("C:/Users/tjb12178/workspace/E_model/bin/algorism4/db/database0.xls");
+		add[	1	]=	new File("C:/Users/tjb12178/workspace/E_model/bin/algorism4/db/database1.xls");
+		add[	2	]=	new File("C:/Users/tjb12178/workspace/E_model/bin/algorism4/db/database2.xls");
+		add[	3	]=	new File("C:/Users/tjb12178/workspace/E_model/bin/algorism4/db/database3.xls");
+		add[	4	]=	new File("C:/Users/tjb12178/workspace/E_model/bin/algorism4/db/database4.xls");
+		add[	5	]=	new File("C:/Users/tjb12178/workspace/E_model/bin/algorism4/db/database5.xls");
+		add[	6	]=	new File("C:/Users/tjb12178/workspace/E_model/bin/algorism4/db/database6.xls");
+		
+		wb[0] = Workbook.getWorkbook(add[	0	]);
+		sheet[0]  = wb[0].getSheet(0);
+		cell0[0]=sheet[0].getCell(1, 0);
+		cell1[0]=sheet[0].getCell(1, 1);
+		cell2[0]=sheet[0].getCell(1, 2);
+		cell3[0]=sheet[0].getCell(1, 3);
+		cell4[0]=sheet[0].getCell(1, 4);
+		cell5[0]=sheet[0].getCell(1, 5);
+		cell6[0]=sheet[0].getCell(1, 6);
+
+		content0[0]=cell0	[0].getContents();	
+		c1[0]=cell1	[0].getContents();	
+		c2[0]=cell2	[0].getContents();	
+		c3[0]=cell3	[0].getContents();	
+		c4[0]=cell4	[0].getContents();	
+		c5[0]=cell5	[0].getContents();	
+		c6[0]=cell6	[0].getContents();	
+
+		
+		wb[	1	] = Workbook.getWorkbook(add[	1	]);
+		sheet[	1	]  = wb[	1	].getSheet(0);
+		cell0[1]=sheet[1].getCell(1, 0);
+		cell1[1]=sheet[1].getCell(1, 1);
+		cell2[1]=sheet[1].getCell(1, 2);
+		cell3[1]=sheet[1].getCell(1, 3);
+		cell4[1]=sheet[1].getCell(1, 4);
+		cell5[1]=sheet[1].getCell(1, 5);
+		cell6[1]=sheet[1].getCell(1, 6);
+		
+		content0[1]=cell0	[1].getContents();	
+		c1[1]=cell1	[1].getContents();	
+		c2[1]=cell2	[1].getContents();	
+		c3[1]=cell3	[1].getContents();	
+		c4[1]=cell4	[1].getContents();	
+		c5[1]=cell5	[1].getContents();	
+		c6[1]=cell6	[1].getContents();	
+		
+		wb[	2	] = Workbook.getWorkbook(add[	2	]);
+		sheet[	2	]  = wb[	2	].getSheet(0);
+		cell0[2]=sheet[2].getCell(1, 0);
+		cell1[2]=sheet[2].getCell(1, 1);
+		cell2[2]=sheet[2].getCell(1, 2);
+		cell3[2]=sheet[2].getCell(1, 3);
+		cell4[2]=sheet[2].getCell(1, 4);
+		cell5[2]=sheet[2].getCell(1, 5);
+		cell6[2]=sheet[2].getCell(1, 6);
+		
+		content0[2]=cell0	[2].getContents();	
+		c1[2]=cell1	[2].getContents();	
+		c2[2]=cell2	[2].getContents();	
+		c3[2]=cell3	[2].getContents();	
+		c4[2]=cell4	[2].getContents();	
+		c5[2]=cell5	[2].getContents();	
+		c6[2]=cell6	[2].getContents();	
+		
+		wb[	3	] = Workbook.getWorkbook(add[	3	]);
+		sheet[	3	]  = wb[	3	].getSheet(0);
+		cell0[3]=sheet[3].getCell(1, 0);
+		cell1[3]=sheet[3].getCell(1, 1);
+		cell2[3]=sheet[3].getCell(1, 2);
+		cell3[3]=sheet[3].getCell(1, 3);
+		cell4[3]=sheet[3].getCell(1, 4);
+		cell5[3]=sheet[3].getCell(1, 5);
+		cell6[3]=sheet[3].getCell(1, 6);
+		
+		content0[3]=cell0	[3].getContents();	
+		c1[3]=cell1	[3].getContents();	
+		c2[3]=cell2	[3].getContents();	
+		c3[3]=cell3	[3].getContents();	
+		c4[3]=cell4	[3].getContents();	
+		c5[3]=cell5	[3].getContents();	
+		c6[3]=cell6	[3].getContents();	
+		
+		wb[	4	] = Workbook.getWorkbook(add[	4	]);
+		sheet[	4	]  = wb[	4	].getSheet(0);
+		cell0[4]=sheet[4].getCell(1, 0);
+		cell1[4]=sheet[4].getCell(1, 1);
+		cell2[4]=sheet[4].getCell(1, 2);
+		cell3[4]=sheet[4].getCell(1, 3);
+		cell4[4]=sheet[4].getCell(1, 4);
+		cell5[4]=sheet[4].getCell(1, 5);
+		cell6[4]=sheet[4].getCell(1, 6);
+		
+		content0[4]=cell0	[4].getContents();	
+		c1[4]=cell1	[4].getContents();	
+		c2[4]=cell2	[4].getContents();	
+		c3[4]=cell3	[4].getContents();	
+		c4[4]=cell4	[4].getContents();	
+		c5[4]=cell5	[4].getContents();	
+		c6[4]=cell6	[4].getContents();	
+		
+		wb[	5	] = Workbook.getWorkbook(add[	5	]);
+		sheet[	5	]  = wb[	5	].getSheet(0);
+		cell0[5]=sheet[5].getCell(1, 0);
+		cell1[5]=sheet[5].getCell(1, 1);
+		cell2[5]=sheet[5].getCell(1, 2);
+		cell3[5]=sheet[5].getCell(1, 3);
+		cell4[5]=sheet[5].getCell(1, 4);
+		cell5[5]=sheet[5].getCell(1, 5);
+		cell6[5]=sheet[5].getCell(1, 6);
+		
+		content0[5]=cell0	[5].getContents();	
+		c1[5]=cell1	[5].getContents();	
+		c2[5]=cell2	[5].getContents();	
+		c3[5]=cell3	[5].getContents();	
+		c4[5]=cell4	[5].getContents();	
+		c5[5]=cell5	[5].getContents();	
+		c6[5]=cell6	[5].getContents();	
+		
+		wb[	6	] = Workbook.getWorkbook(add[	6	]);
+		sheet[	6	]  = wb[	6	].getSheet(0);
+		cell0[6]=sheet[6].getCell(1, 0);
+		cell1[6]=sheet[6].getCell(1, 1);
+		cell2[6]=sheet[6].getCell(1, 2);
+		cell3[6]=sheet[6].getCell(1, 3);
+		cell4[6]=sheet[6].getCell(1, 4);
+		cell5[6]=sheet[6].getCell(1, 5);
+		cell6[6]=sheet[6].getCell(1, 6);
+		
+		content0[6]=cell0	[6].getContents();	
+		c1[6]=cell1	[6].getContents();	
+		c2[6]=cell2	[6].getContents();	
+		c3[6]=cell3	[6].getContents();	
+		c4[6]=cell4	[6].getContents();	
+		c5[6]=cell5	[6].getContents();	
+		c6[6]=cell6	[6].getContents();	
+
+		
+		ImageIcon ii = createImageIcon("C:/Users/tjb12178/workspace/E_model/db/star.png");	//icon
+//Design		
+		 panel0 = createPanel("");	//add panel 
+	     tp.addTab("Design",ii,panel0,"Design");
+	     
+	     add(tp);
+	     
+	     tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	     tp.setTabPlacement(JTabbedPane.TOP);
+          
+	     panel0.setLayout(new GridBagLayout());
+	     GridBagConstraints c = new GridBagConstraints();
+	     JPanel[] j0 = new JPanel[Design.length];
+	     JTextField[] field0 = new JTextField[Design.length];
+	     JComboBox<String>[]  cb0	=	new JComboBox[Design.length];
+	     double [] num0 = new double [Design.length];
+	     
+	     
+	     for (i=0;i<Design.length;i++){
+	    	 j0[i] = createsubPanel(Design[i]);
+	    	 j0[i].setName(Design[i]);
+		        c.fill = GridBagConstraints.HORIZONTAL;
+			    c.weightx = 2;
+			    c.gridx = i%3;
+			    c.gridy = Math.round(i/3);
+			    if (j0[i].getName()==""){}
+			    else {panel0.add(j0[i], c);}
+			    field0[i] = field;
+			    cb0[i]=cb;
+			    //System.out.println( cb0[i].getSelectedItem());
+			    num0[i] = Double.parseDouble(field.getText())*(-1);
+	     }    
+	     
+//C_H	    
+	     panel1 = createPanel("");	//add panel 
+	     tp.addTab("Construction",ii,panel1,"Construction");
+	     panel1.add(tp0);
+	     	     
+	     tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	     tp.setTabPlacement(JTabbedPane.TOP);
+
+	     
+	     panel1_0 = createPanel("");
+	     tp0.addTab("Hull",ii,panel1_0,"Hull");
+	     panel1_0.setLayout(new GridBagLayout());
+	     GridBagConstraints c1 = new GridBagConstraints();
+	     JPanel[] j1_0 = new JPanel[C_H.length];
+	     JTextField[] field1_0 = new JTextField[C_H.length];
+	     JComboBox<String>[]  cb1_0	=	new JComboBox[C_H.length];
+	     ActionListener[] db1_0 = new ActionListener[C_H.length];
+	     
+	     for (i=0;i<C_H.length;i++){
+	    	 j1_0[i] = createsubPanel(C_H[i]);
+	    	 j1_0[i].setName(C_H[i]);
+		        c1.fill = GridBagConstraints.HORIZONTAL;
+			    c1.weightx = 1;
+			    c1.weighty = 1;
+			    c1.gridx = i%3;
+			    c1.gridy = Math.round(i/3);
+			    if (j1_0[i].getName()==""){}
+			    else {panel1_0.add(j1_0[i], c1);}
+			    field1_0[i] = field;
+			    cb1_0[i]=cb;
+	         }
+    	     
+//C_M
+	     panel1_1 = createPanel("");
+	     tp0.addTab("Machinery",ii,panel1_1,"Machinery");
+	     panel1_1.setLayout(new GridBagLayout());
+	     GridBagConstraints c2 = new GridBagConstraints();
+	     JPanel[] j1_1 = new JPanel[C_M.length];
+	     JTextField[] field1_1 = new JTextField[C_M.length];
+	     JComboBox<String>[]  cb1_1	=	new JComboBox[C_M.length];
+	     ActionListener[] db1_1 = new ActionListener[C_M.length];
+	     
+	     for (i=0;i<C_M.length;i++){
+	    	 j1_1[i] = createsubPanel(C_M[i]);
+	    	 j1_1[i].setName(C_M[i]);
+		        c2.fill = GridBagConstraints.HORIZONTAL;
+			    c2.weightx = 1;
+			    c2.weighty = 1;
+			    c2.gridx = i%3;
+			    c2.gridy = Math.round(i/3);
+			    if (j1_1[i].getName()==""){}
+			    else {panel1_1.add(j1_1[i], c2);}
+			    field1_1[i] = field;
+			    cb1_1[i]=cb;
+	         }
+
+//C_A
+	     panel1_2 = createPanel("");
+	     tp0.addTab("Accommodation",ii,panel1_2,"Accommodation");
+	     panel1_2.setLayout(new GridBagLayout());
+	     GridBagConstraints c3 = new GridBagConstraints();
+	     JPanel[] j1_2 = new JPanel[C_A.length];
+	     JTextField[] field1_2 = new JTextField[C_A.length];
+	     JComboBox<String>[]  cb1_2	=	new JComboBox[C_A.length];
+	     ActionListener[] db1_2 = new ActionListener[C_A.length];
+
+	     for (i=0;i<C_A.length;i++){
+	    	 j1_2[i] = createsubPanel(C_A[i]);
+	    	 j1_2[i].setName(C_A[i]);
+		        c3.fill = GridBagConstraints.HORIZONTAL;
+			    c3.weightx = 1;
+			    c3.weighty = 1;
+			    c3.gridx = i%3;
+			    c3.gridy = Math.round(i/3);
+			    if (j1_2[i].getName()==""){}
+			    else {panel1_2.add(j1_2[i], c3);}
+			    field1_2[i] = field;
+			    cb1_2[i]=cb;
+			}	  
+	     
+//Operation	    
+	     panel2 = createPanel("");	//add panel 
+		 tp.addTab("Operation",ii,panel2,"Operation");
+	     tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	     tp.setTabPlacement(JTabbedPane.TOP);
+         panel2.setLayout(new GridBagLayout());
+	     GridBagConstraints c4 = new GridBagConstraints();
+	     JPanel[] j2 = new JPanel[Operation.length];
+	     JTextField[] field2 = new JTextField[Operation.length];
+	     JComboBox<String>[]  cb2	=	new JComboBox[Operation.length];
+	     ActionListener[] db2 = new ActionListener[Operation.length];
+
+	     for (i=0;i<Operation.length;i++){
+	    	 j2[i] = createsubPanel(Operation[i]);
+	    	 j2[i].setName(Operation[i]);
+		        c4.fill = GridBagConstraints.HORIZONTAL;
+			    c4.weightx = 1;
+			    c4.weighty = 1;
+			    c4.gridx = i%3;
+			    c4.gridy = Math.round(i/3);
+			    if (j2[i].getName()==""){}
+			    else {panel2.add(j2[i], c4);}
+			    field2[i] = field;
+			    cb2[i]=cb;
+		    }	
+	     
+//Maintenance	    
+	     panel3 = createPanel("");	//add panel 
+		 tp.addTab("Maintenance",ii,panel3,"Maintenance");
+	     tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	     tp.setTabPlacement(JTabbedPane.TOP);
+	     panel3.setLayout(new GridBagLayout());
+	     GridBagConstraints c5 = new GridBagConstraints();
+	     JPanel[] j3 = new JPanel[Maintenance.length];
+	     JTextField[] field3 = new JTextField[Maintenance.length];
+	     JComboBox<String>[]  cb3	=	new JComboBox[Maintenance.length];
+	     ActionListener[] db3 = new ActionListener[Maintenance.length];
+
+	     for (i=0;i<Maintenance.length;i++){
+	    	 j3[i] = createsubPanel(Maintenance[i]);
+	    	 j3[i].setName(Maintenance[i]);
+		        c5.fill = GridBagConstraints.HORIZONTAL;
+			    c5.weightx = 1;
+			    c5.weighty = 1;
+			    c5.gridx = i%3;
+			    c5.gridy = Math.round(i/3);
+			    if (j3[i].getName()==""){}
+			    else {panel3.add(j3[i], c5);}
+			    field3[i] = field;
+			    cb3[i]=cb;
+	         }	
+	     
+//Scrapping	    
+	     panel4 = createPanel("");	//add panel 
+		 tp.addTab("Scrapping",ii,panel4,"Scrapping");
+	     tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	     tp.setTabPlacement(JTabbedPane.TOP);
+	     tp0.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	     tp0.setTabPlacement(JTabbedPane.TOP);
+	
+	     panel4.setLayout(new GridBagLayout());
+	     GridBagConstraints c6 = new GridBagConstraints();
+	     JPanel[] j4 = new JPanel[Scrapping.length];
+	     JTextField[] field4 = new JTextField[Scrapping.length];
+	     JComboBox<String>[]  cb4	=	new JComboBox[Scrapping.length];
+	     ActionListener[] db4 = new ActionListener[Scrapping.length];
+
+	     for (i=0;i<Scrapping.length;i++){
+	    	 if(i>=Scrapping.length){
+	    		 break;
+	    	 }
+	    	 j4[i] = createsubPanel(Scrapping[i]);
+		      j4[i].setName(Scrapping[i]);
+		        c6.fill = GridBagConstraints.HORIZONTAL;
+			    c6.weightx = 1;
+			    c6.weighty = 1;
+			    c6.gridx = i%3;
+			    c6.gridy = Math.round(i/3);
+			    if (j4[i].getName()==""){}
+			    else {panel4.add(j4[i], c6);}
+			    field4[i] = field;
+			    cb4[i]=cb;
+	     	}
+
+	     cb_m = new JComboBox[length];
+	     cb_m[0]=cb0[0];cb_m[1]=cb0[1];cb_m[2]=cb0[2];cb_m[3]=cb0[3];cb_m[4]=cb0[4];
+	     cb_m[5]=cb1_0[0];cb_m[6]=cb1_0[1];cb_m[7]=cb1_0[2];cb_m[8]=cb1_0[3];cb_m[9]=cb1_0[4];cb_m[10]=cb1_0[5];
+	     cb_m[11]=cb1_1[0];cb_m[12]=cb1_1[1];
+	     cb_m[13]=cb1_2[0];cb_m[14]=cb1_2[1];cb_m[15]=cb1_2[2];cb_m[16]=cb1_2[3];cb_m[17]=cb1_2[4];
+	     cb_m[18]=cb2[0];cb_m[19]=cb2[1];cb_m[20]=cb2[2];cb_m[21]=cb2[3];cb_m[22]=cb2[4];cb_m[23]=cb2[5];
+	     cb_m[24]=cb3[0];cb_m[25]=cb3[1];cb_m[26]=cb3[2];cb_m[27]=cb3[3];cb_m[28]=cb3[4];
+	     cb_m[29]=cb4[0];cb_m[30]=cb4[1];cb_m[31]=cb4[2];cb_m[32]=cb4[3];
+	     
+	     
+	     System.out.println(data_m[0]);
+	     //data_m[1]=data[2][1].toString();
+	     
+	     db0[0] = createActionListener(	0	);  
+	     cb0[0].addActionListener(db0[0]);
+	     
+	     db0[1] = createActionListener(	1	);  
+	     cb0[1].addActionListener(db0[1]);
+
+	     db0[2] = createActionListener(	2	);  
+	     cb0[2].addActionListener(db0[2]);
+	     db0[3] = createActionListener(	3	);  
+	     cb0[3].addActionListener(db0[3]);
+	     db0[4] = createActionListener(	4	);  
+	     cb0[4].addActionListener(db0[4]);
+	     
+	     //System.out.println((String)data[0][0]);
+	     
+	     db1_0[0] = createActionListener(  	5	);
+	     cb1_0[0].addActionListener(db1_0[0]);		
+	     db1_0[1] = createActionListener(	6	);
+	     cb1_0[1].addActionListener(db1_0[1]);		
+	     db1_0[2] = createActionListener( 	7	);
+	     cb1_0[2].addActionListener(db1_0[2]);		
+	     db1_0[3] = createActionListener(	8	);
+	     cb1_0[3].addActionListener(db1_0[3]);		
+	     db1_0[4] = createActionListener(	9	);
+	     cb1_0[4].addActionListener(db1_0[4]);		
+	     db1_0[5] = createActionListener(	10	);
+	     cb1_0[5].addActionListener(db1_0[5]);		
+
+	     db1_1[0] = createActionListener(  	11	);
+	     cb1_1[0].addActionListener(db1_1[0]);		
+	     db1_1[1] = createActionListener(	12	);
+	     cb1_1[1].addActionListener(db1_1[1]);		
+	     
+	     db1_2[0] = createActionListener(  	13	);
+	     cb1_2[0].addActionListener(db1_2[0]);		
+	     db1_2[1] = createActionListener(  	14	);
+	     cb1_2[1].addActionListener(db1_2[1]);		
+	     db1_2[2] = createActionListener(  	15	);
+	     cb1_2[2].addActionListener(db1_2[2]);		
+	     db1_2[3] = createActionListener(  	16	);
+	     cb1_2[3].addActionListener(db1_2[3]);	
+	     db1_2[4] = createActionListener(  	17	);
+	     cb1_2[4].addActionListener(db1_2[4]);		
+
+	     db2[0] = createActionListener(  	18	);
+	     cb2[0].addActionListener(db2[0]);		
+	     db2[1] = createActionListener(  	19	);
+	     cb2[1].addActionListener(db2[1]);		
+	     db2[2] = createActionListener(  	20	);
+	     cb2[2].addActionListener(db2[2]);		
+	     db2[3] = createActionListener(  	21	);
+	     cb2[3].addActionListener(db2[3]);		
+	     db2[4] = createActionListener(  	22	);
+	     cb2[4].addActionListener(db2[4]);		
+	     db2[5] = createActionListener(  	23	);
+	     cb2[5].addActionListener(db2[5]);		
+	     
+	     db3[0] = createActionListener(  	24	);
+	     cb3[0].addActionListener(db3[0]);		
+	     db3[1] = createActionListener(  	25	);
+	     cb3[1].addActionListener(db3[1]);		
+	     db3[2] = createActionListener(  	26	);
+	     cb3[2].addActionListener(db3[2]);		
+	     db3[3] = createActionListener(  	27	);
+	     cb3[3].addActionListener(db3[3]);		
+	     db3[4] = createActionListener(  	28	);
+	     cb3[4].addActionListener(db3[4]);		
+	     
+	     db4[0] = createActionListener(  	29	);
+	     cb4[0].addActionListener(db4[0]);		
+	     db4[1] = createActionListener(  	30	);
+	     cb4[1].addActionListener(db4[1]);		
+	     db4[2] = createActionListener(  	31	);
+	     cb4[2].addActionListener(db4[2]);		
+	     db4[3] = createActionListener(  	32	);
+	     cb4[3].addActionListener(db4[3]);		
+
+//	     data_m[0]=(String) data[1][1];
+//	     data_m[1]=(String) data[1][1];
+//	     data_m[2]=(String) data[1][1];
+	     
+	     
+//Report	    
+	     panel5 = createPanel("");	//add panel 
+		 tp.addTab("Report",ii,panel5,"Report");
+	     tp.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	     tp.setTabPlacement(JTabbedPane.TOP);
+	     panel5.setLayout(new BoxLayout(panel5, BoxLayout.PAGE_AXIS));
+	     setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+	     
+	     JTextPane textReport = new JTextPane();
+	     textReport.setAlignmentX(Component.CENTER_ALIGNMENT);
+	     JScrollPane sp = new JScrollPane(textReport);
+//	     areaReport.setLineWrap(true);
+//	     areaReport.setAutoscrolls(true);
+	     textReport.setPreferredSize(new Dimension (200,200));
+  
+	     panel5.add(sp);
+	     
+//add button	     
+	     JButton calcButton = new JButton("Calculate");
+	     calcButton.setName("calcButton");
+	     calcButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+	     panel5.add(calcButton);
+
+//add action for clicking button	     
+	     calcButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//include all the equaitons here 
+//				Parameter_C_System CS1 = new Parameter_C_System();
+//				Parameter_C_Material CM1 = new Parameter_C_Material();
+//				Parameter_O O1 = new Parameter_O();
+//				Parameter_S S1 = new Parameter_S();
+
+				textReport.setText(
+			    		 //user inputs
+			    		 field0[0].getText()+field0[1].getText()+field0[2].getText()+"\n"+
+			    		 field1_0[0].getText()+field1_0[1].getText()+field1_0[2].getText()+field1_0[3].getText()+field1_0[4].getText()+field1_0[5].getText()+"\n"+
+			    		 field1_1[0].getText()+field1_1[1].getText()+"\n"+
+			    		 field1_2[0].getText()+field1_2[1].getText()+field1_2[2].getText()+field1_2[3].getText()+field1_2[4].getText()+"\n"+
+			    		 field2[0].getText()+field2[1].getText()+field2[2].getText()+field2[3].getText()+field2[4].getText()+field2[5].getText()+"\n"+
+			    		 field3[0].getText()+field3[1].getText()+field3[2].getText()+field3[3].getText()+field3[4].getText()+"\n"+
+			    		 field4[0].getText()+field4[1].getText()+field4[2].getText()+field4[3].getText()+"\n"+
+			    		 //database
+			    		 cb0[0].getSelectedItem()+cb0[1].getSelectedItem()+cb0[2].getSelectedItem()+"\n"+
+			    		 cb1_0[0].getSelectedItem()+cb1_0[1].getSelectedItem()+cb1_0[2].getSelectedItem()+cb1_0[3].getSelectedItem()+cb1_0[4].getSelectedItem()+cb1_0[5].getSelectedItem()+"\n"+
+			    		 cb1_1[0].getSelectedItem()+cb1_1[1].getSelectedItem()+"\n"+
+			    		 cb1_2[0].getSelectedItem()+cb1_2[1].getSelectedItem()+cb1_2[2].getSelectedItem()+cb1_2[3].getSelectedItem()+cb1_2[4].getSelectedItem()+"\n"+
+			    		 cb2[0].getSelectedItem()+cb2[1].getSelectedItem()+cb2[2].getSelectedItem()+cb2[3].getSelectedItem()+cb2[4].getSelectedItem()+cb2[5].getSelectedItem()+"\n"+
+			    		 cb3[0].getSelectedItem()+cb3[1].getSelectedItem()+cb3[2].getSelectedItem()+cb3[3].getSelectedItem()+cb3[4].getSelectedItem()+"\n"+
+			    		 cb4[0].getSelectedItem()+cb4[1].getSelectedItem()+cb4[2].getSelectedItem()+cb4[3].getSelectedItem()+"\n"+
+			    		 +num0[0]+"\n"+
+			    		    				
+			    						 data_mm[0][	0	]+	data_mm[1][	0	]+	data_mm[2][	0	]+	data_mm[3][	0	]+	data_mm[4][	0	]+	data_mm[5][	0	]+	data_mm[6][	0	]+	"\n"+
+			    						 data_mm[0][	1	]+	data_mm[1][	1	]+	data_mm[2][	1	]+	data_mm[3][	1	]+	data_mm[4][	1	]+	data_mm[5][	1	]+	data_mm[6][	1	]+	"\n"+
+			    						 data_mm[0][	2	]+	data_mm[1][	2	]+	data_mm[2][	2	]+	data_mm[3][	2	]+	data_mm[4][	2	]+	data_mm[5][	2	]+	data_mm[6][	2	]+	"\n"+
+			    						 data_mm[0][	3	]+	data_mm[1][	3	]+	data_mm[2][	3	]+	data_mm[3][	3	]+	data_mm[4][	3	]+	data_mm[5][	3	]+	data_mm[6][	3	]+	"\n"+
+			    						 data_mm[0][	4	]+	data_mm[1][	4	]+	data_mm[2][	4	]+	data_mm[3][	4	]+	data_mm[4][	4	]+	data_mm[5][	4	]+	data_mm[6][	4	]+	"\n"+
+			    						 data_mm[0][	5	]+	data_mm[1][	5	]+	data_mm[2][	5	]+	data_mm[3][	5	]+	data_mm[4][	5	]+	data_mm[5][	5	]+	data_mm[6][	5	]+	"\n"+
+			    						 data_mm[0][	6	]+	data_mm[1][	6	]+	data_mm[2][	6	]+	data_mm[3][	6	]+	data_mm[4][	6	]+	data_mm[5][	6	]+	data_mm[6][	6	]+	"\n"+
+			    						 data_mm[0][	7	]+	data_mm[1][	7	]+	data_mm[2][	7	]+	data_mm[3][	7	]+	data_mm[4][	7	]+	data_mm[5][	7	]+	data_mm[6][	7	]+	"\n"+
+			    						 data_mm[0][	8	]+	data_mm[1][	8	]+	data_mm[2][	8	]+	data_mm[3][	8	]+	data_mm[4][	8	]+	data_mm[5][	8	]+	data_mm[6][	8	]+	"\n"+
+			    						 data_mm[0][	9	]+	data_mm[1][	9	]+	data_mm[2][	9	]+	data_mm[3][	9	]+	data_mm[4][	9	]+	data_mm[5][	9	]+	data_mm[6][	9	]+	"\n"+
+			    						 data_mm[0][	10	]+	data_mm[1][	10	]+	data_mm[2][	10	]+	data_mm[3][	10	]+	data_mm[4][	10	]+	data_mm[5][	10	]+	data_mm[6][	10	]+	"\n"+
+			    						 data_mm[0][	11	]+	data_mm[1][	11	]+	data_mm[2][	11	]+	data_mm[3][	11	]+	data_mm[4][	11	]+	data_mm[5][	11	]+	data_mm[6][	11	]+	"\n"+
+			    						 data_mm[0][	12	]+	data_mm[1][	12	]+	data_mm[2][	12	]+	data_mm[3][	12	]+	data_mm[4][	12	]+	data_mm[5][	12	]+	data_mm[6][	12	]+	"\n"+
+			    						 data_mm[0][	13	]+	data_mm[1][	13	]+	data_mm[2][	13	]+	data_mm[3][	13	]+	data_mm[4][	13	]+	data_mm[5][	13	]+	data_mm[6][	13	]+	"\n"+
+			    						 data_mm[0][	14	]+	data_mm[1][	14	]+	data_mm[2][	14	]+	data_mm[3][	14	]+	data_mm[4][	14	]+	data_mm[5][	14	]+	data_mm[6][	14	]+	"\n"+
+			    						 data_mm[0][	15	]+	data_mm[1][	15	]+	data_mm[2][	15	]+	data_mm[3][	15	]+	data_mm[4][	15	]+	data_mm[5][	15	]+	data_mm[6][	15	]+	"\n"+
+			    						 data_mm[0][	16	]+	data_mm[1][	16	]+	data_mm[2][	16	]+	data_mm[3][	16	]+	data_mm[4][	16	]+	data_mm[5][	16	]+	data_mm[6][	16	]+	"\n"+
+			    						 data_mm[0][	17	]+	data_mm[1][	17	]+	data_mm[2][	17	]+	data_mm[3][	17	]+	data_mm[4][	17	]+	data_mm[5][	17	]+	data_mm[6][	17	]+	"\n"+
+			    						 data_mm[0][	18	]+	data_mm[1][	18	]+	data_mm[2][	18	]+	data_mm[3][	18	]+	data_mm[4][	18	]+	data_mm[5][	18	]+	data_mm[6][	18	]+	"\n"+
+			    						 data_mm[0][	19	]+	data_mm[1][	19	]+	data_mm[2][	19	]+	data_mm[3][	19	]+	data_mm[4][	19	]+	data_mm[5][	19	]+	data_mm[6][	19	]+	"\n"+
+			    						 data_mm[0][	20	]+	data_mm[1][	20	]+	data_mm[2][	20	]+	data_mm[3][	20	]+	data_mm[4][	20	]+	data_mm[5][	20	]+	data_mm[6][	20	]+	"\n"+
+			    						 data_mm[0][	21	]+	data_mm[1][	21	]+	data_mm[2][	21	]+	data_mm[3][	21	]+	data_mm[4][	21	]+	data_mm[5][	21	]+	data_mm[6][	21	]+	"\n"+
+			    						 data_mm[0][	22	]+	data_mm[1][	22	]+	data_mm[2][	22	]+	data_mm[3][	22	]+	data_mm[4][	22	]+	data_mm[5][	22	]+	data_mm[6][	22	]+	"\n"+
+			    						 data_mm[0][	23	]+	data_mm[1][	23	]+	data_mm[2][	23	]+	data_mm[3][	23	]+	data_mm[4][	23	]+	data_mm[5][	23	]+	data_mm[6][	23	]+	"\n"+
+			    						 data_mm[0][	24	]+	data_mm[1][	24	]+	data_mm[2][	24	]+	data_mm[3][	24	]+	data_mm[4][	24	]+	data_mm[5][	24	]+	data_mm[6][	24	]+	"\n"+
+			    						 data_mm[0][	25	]+	data_mm[1][	25	]+	data_mm[2][	25	]+	data_mm[3][	25	]+	data_mm[4][	25	]+	data_mm[5][	25	]+	data_mm[6][	25	]+	"\n"+
+			    						 data_mm[0][	26	]+	data_mm[1][	26	]+	data_mm[2][	26	]+	data_mm[3][	26	]+	data_mm[4][	26	]+	data_mm[5][	26	]+	data_mm[6][	26	]+	"\n"+
+			    						 data_mm[0][	27	]+	data_mm[1][	27	]+	data_mm[2][	27	]+	data_mm[3][	27	]+	data_mm[4][	27	]+	data_mm[5][	27	]+	data_mm[6][	27	]+	"\n"+
+			    						 data_mm[0][	28	]+	data_mm[1][	28	]+	data_mm[2][	28	]+	data_mm[3][	28	]+	data_mm[4][	28	]+	data_mm[5][	28	]+	data_mm[6][	28	]+	"\n"+
+			    						 data_mm[0][	29	]+	data_mm[1][	29	]+	data_mm[2][	29	]+	data_mm[3][	29	]+	data_mm[4][	29	]+	data_mm[5][	29	]+	data_mm[6][	29	]+	"\n"+
+			    						 data_mm[0][	30	]+	data_mm[1][	30	]+	data_mm[2][	30	]+	data_mm[3][	30	]+	data_mm[4][	30	]+	data_mm[5][	30	]+	data_mm[6][	30	]+	"\n"+
+			    						 data_mm[0][	31	]+	data_mm[1][	31	]+	data_mm[2][	31	]+	data_mm[3][	31	]+	data_mm[4][	31	]+	data_mm[5][	31	]+	data_mm[6][	31	]+	"\n"+
+			    						 data_mm[0][	32	]+	data_mm[1][	32	]+	data_mm[2][	32	]+	data_mm[3][	32	]+	data_mm[4][	32	]+	data_mm[5][	32	]+	data_mm[6][	32	]	
+
+
+			    		 );
+				
+				//creating charts: convert string to double
+			     if(cb0[0].getSelectedItem()=="Select database"){num0_0 = Double.parseDouble(field0[0].getText());} else{num0_0 = Double.parseDouble(cb0[0].getItemAt(cb0[0].getSelectedIndex()));};
+			     if(cb0[1].getSelectedItem()=="Select database"){num0_1 = Double.parseDouble(field0[1].getText());} else{num0_1 = Double.parseDouble(cb0[1].getItemAt(cb0[1].getSelectedIndex()));};
+			     if(cb0[2].getSelectedItem()=="Select database"){num0_2 = Double.parseDouble(field0[2].getText());} else{num0_2 = Double.parseDouble(cb0[2].getItemAt(cb0[2].getSelectedIndex()));};
+			     if(cb0[3].getSelectedItem()=="Select database"){num0_3 = Double.parseDouble(field0[3].getText());} else{num0_3 = Double.parseDouble(cb0[3].getItemAt(cb0[3].getSelectedIndex()));};
+			     if(cb0[4].getSelectedItem()=="Select database"){num0_4 = Double.parseDouble(field0[4].getText());} else{num0_4 = Double.parseDouble(cb0[4].getItemAt(cb0[4].getSelectedIndex()));};
+			     if(cb1_0[0].getSelectedItem()=="Select database"){num1_0_0 = Double.parseDouble(field1_0[0].getText());} else{num1_0_0 = Double.parseDouble(cb1_0[0].getItemAt(cb1_0[0].getSelectedIndex()));};
+			     if(cb1_0[1].getSelectedItem()=="Select database"){num1_0_1 = Double.parseDouble(field1_0[1].getText());} else{num1_0_1 = Double.parseDouble(cb1_0[1].getItemAt(cb1_0[1].getSelectedIndex()));};
+			     if(cb1_0[2].getSelectedItem()=="Select database"){num1_0_2 = Double.parseDouble(field1_0[2].getText());} else{num1_0_2 = Double.parseDouble(cb1_0[2].getItemAt(cb1_0[2].getSelectedIndex()));};
+			     if(cb1_0[3].getSelectedItem()=="Select database"){num1_0_3 = Double.parseDouble(field1_0[3].getText());} else{num1_0_3 = Double.parseDouble(cb1_0[3].getItemAt(cb1_0[3].getSelectedIndex()));};
+			     if(cb1_0[4].getSelectedItem()=="Select database"){num1_0_4 = Double.parseDouble(field1_0[4].getText());} else{num1_0_4 = Double.parseDouble(cb1_0[4].getItemAt(cb1_0[4].getSelectedIndex()));};
+			     if(cb1_0[5].getSelectedItem()=="Select database"){num1_0_5 = Double.parseDouble(field1_0[5].getText());} else{num1_0_5 = Double.parseDouble(cb1_0[5].getItemAt(cb1_0[5].getSelectedIndex()));};
+			     if(cb1_1[0].getSelectedItem()=="Select database"){num1_1_0 = Double.parseDouble(field1_1[0].getText());} else{num1_1_0 = Double.parseDouble(cb1_1[0].getItemAt(cb1_1[0].getSelectedIndex()));};
+			     if(cb1_1[1].getSelectedItem()=="Select database"){num1_1_1 = Double.parseDouble(field1_1[1].getText());} else{num1_1_1 = Double.parseDouble(cb1_1[1].getItemAt(cb1_1[1].getSelectedIndex()));};
+			     if(cb1_2[0].getSelectedItem()=="Select database"){num1_2_0 = Double.parseDouble(field1_2[0].getText());} else{num1_2_0 = Double.parseDouble(cb1_2[0].getItemAt(cb1_2[0].getSelectedIndex()));};
+			     if(cb1_2[1].getSelectedItem()=="Select database"){num1_2_1 = Double.parseDouble(field1_2[1].getText());} else{num1_2_1 = Double.parseDouble(cb1_2[1].getItemAt(cb1_2[1].getSelectedIndex()));};
+			     if(cb1_2[2].getSelectedItem()=="Select database"){num1_2_2 = Double.parseDouble(field1_2[2].getText());} else{num1_2_2 = Double.parseDouble(cb1_2[2].getItemAt(cb1_2[2].getSelectedIndex()));};
+			     if(cb1_2[3].getSelectedItem()=="Select database"){num1_2_3 = Double.parseDouble(field1_2[3].getText());} else{num1_2_3 = Double.parseDouble(cb1_2[3].getItemAt(cb1_2[3].getSelectedIndex()));};
+			     if(cb1_2[4].getSelectedItem()=="Select database"){num1_2_4 = Double.parseDouble(field1_2[4].getText());} else{num1_2_4 = Double.parseDouble(cb1_2[4].getItemAt(cb1_2[4].getSelectedIndex()));};
+			     if(cb2[0].getSelectedItem()=="Select database"){num2_0 = Double.parseDouble(field2[0].getText());} else{num2_0 = Double.parseDouble(cb2[0].getItemAt(cb2[0].getSelectedIndex()));};
+			     if(cb2[1].getSelectedItem()=="Select database"){num2_1 = Double.parseDouble(field2[1].getText());} else{num2_1 = Double.parseDouble(cb2[1].getItemAt(cb2[1].getSelectedIndex()));};
+			     if(cb2[2].getSelectedItem()=="Select database"){num2_2 = Double.parseDouble(field2[2].getText());} else{num2_2 = Double.parseDouble(cb2[2].getItemAt(cb2[2].getSelectedIndex()));};
+			     if(cb2[3].getSelectedItem()=="Select database"){num2_3 = Double.parseDouble(field2[3].getText());} else{num2_3 = Double.parseDouble(cb2[3].getItemAt(cb2[3].getSelectedIndex()));};
+			     if(cb2[4].getSelectedItem()=="Select database"){num2_4 = Double.parseDouble(field2[4].getText());} else{num2_4 = Double.parseDouble(cb2[4].getItemAt(cb2[4].getSelectedIndex()));};
+			     if(cb2[5].getSelectedItem()=="Select database"){num2_5 = Double.parseDouble(field2[5].getText());} else{num2_5 = Double.parseDouble(cb2[5].getItemAt(cb2[5].getSelectedIndex()));};
+			     if(cb3[0].getSelectedItem()=="Select database"){num3_0 = Double.parseDouble(field3[0].getText());} else{num3_0 = Double.parseDouble(cb3[0].getItemAt(cb3[0].getSelectedIndex()));};
+			     if(cb3[1].getSelectedItem()=="Select database"){num3_1 = Double.parseDouble(field3[1].getText());} else{num3_1 = Double.parseDouble(cb3[1].getItemAt(cb3[1].getSelectedIndex()));};
+			     if(cb3[2].getSelectedItem()=="Select database"){num3_2 = Double.parseDouble(field3[2].getText());} else{num3_2 = Double.parseDouble(cb3[2].getItemAt(cb3[2].getSelectedIndex()));};
+			     if(cb3[3].getSelectedItem()=="Select database"){num3_3 = Double.parseDouble(field3[3].getText());} else{num3_3 = Double.parseDouble(cb3[3].getItemAt(cb3[3].getSelectedIndex()));};
+			     if(cb3[4].getSelectedItem()=="Select database"){num3_4 = Double.parseDouble(field3[4].getText());} else{num3_4 = Double.parseDouble(cb3[4].getItemAt(cb3[4].getSelectedIndex()));};
+			     if(cb4[0].getSelectedItem()=="Select database"){num4_0 = Double.parseDouble(field4[0].getText());} else{num4_0 = Double.parseDouble(cb4[0].getItemAt(cb4[0].getSelectedIndex()));};
+			     if(cb4[1].getSelectedItem()=="Select database"){num4_1 = Double.parseDouble(field4[1].getText());} else{num4_1 = Double.parseDouble(cb4[1].getItemAt(cb4[1].getSelectedIndex()));};
+			     if(cb4[2].getSelectedItem()=="Select database"){num4_2 = Double.parseDouble(field4[2].getText());} else{num4_2 = Double.parseDouble(cb4[2].getItemAt(cb4[2].getSelectedIndex()));};
+			     if(cb4[3].getSelectedItem()=="Select database"){num4_3 = Double.parseDouble(field4[3].getText());} else{num4_3 = Double.parseDouble(cb4[3].getItemAt(cb4[3].getSelectedIndex()));};
+
+			     
+//			      num0_1 = Double.parseDouble(field0[1].getText());
+//			      num0_2 = Double.parseDouble(field0[2].getText());
+//			      num1_0_0 = Double.parseDouble(field1_0[0].getText());
+//			      num1_0_1 = Double.parseDouble(field1_0[1].getText());
+//			      num1_0_2 = Double.parseDouble(field1_0[2].getText());
+//			      num1_0_3 = Double.parseDouble(field1_0[3].getText());
+//			      num1_0_4 = Double.parseDouble(field1_0[4].getText());
+//			      num1_0_5 = Double.parseDouble(field1_0[5].getText());
+//			      num1_1_0 = Double.parseDouble(field1_1[0].getText());
+//			      num1_1_1 = Double.parseDouble(field1_1[1].getText());
+//			      num1_2_0 = Double.parseDouble(field1_2[0].getText());
+//			      num1_2_1 = Double.parseDouble(field1_2[1].getText());
+//			      num1_2_2 = Double.parseDouble(field1_2[2].getText());
+//			      num1_2_3 = Double.parseDouble(field1_2[3].getText());
+//			      num1_2_4 = Double.parseDouble(field1_2[4].getText());
+//			      num2_0 = Double.parseDouble(field2[0].getText());
+//			      num2_1 = Double.parseDouble(field2[1].getText());
+//			      num2_2 = Double.parseDouble(field2[2].getText());
+//			      num2_3 = Double.parseDouble(field2[3].getText());
+//			      num2_4 = Double.parseDouble(field2[4].getText());
+//			      num2_5 = Double.parseDouble(field2[5].getText());
+//			      num3_0 = Double.parseDouble(field3[0].getText());
+//			      num3_1 = Double.parseDouble(field3[1].getText());
+//			      num3_2 = Double.parseDouble(field3[2].getText());
+//			      num3_3 = Double.parseDouble(field3[3].getText());
+//			      num3_4 = Double.parseDouble(field3[4].getText());
+//			      num4_0 = Double.parseDouble(field4[0].getText());
+//			      num4_1 = Double.parseDouble(field4[1].getText());
+//			      num4_2 = Double.parseDouble(field4[2].getText());
+//			      num4_3 = Double.parseDouble(field4[3].getText());
+
+			     double sum0 = num0_0+ num0_1+num0_2;
+			     double sum1 = num1_0_0 +num1_0_1 + num1_0_2+ num1_0_3+ num1_0_4+ num1_0_5;
+			     double sum2 = num1_1_0 + num1_1_1;  
+			     double	sum3 = num1_2_0 + num1_2_1 + num1_2_2 + num1_2_3 + num1_2_4; 
+			     double sum4 = num2_0+num2_1+num2_2	+ num2_3+ num2_4+ num2_5;	
+			     double sum5 =num3_0+ num3_1+ num3_2+ num3_3+ num3_4;
+			     double sum6 = num4_0+ num4_1+ num4_2+ num4_3;
+			     System.out.println(sum0);
+			     System.out.println(sum1);
+			     System.out.println(sum2);
+			     System.out.println(sum3);
+			     System.out.println(sum4);
+			     System.out.println(sum5);
+			     System.out.println(sum6);
+			     double sum = sum0+sum1+sum2+sum3+sum4+sum5+sum6;
+			     
+			     //generate a piechart
+			     ArrayList<Segment> values = new ArrayList<Segment>();
+			     values.add(new Segment(sum0/sum*100, Phase[0], Color.RED));
+			     values.add(new Segment(sum1/sum*100, Phase[1], Color.ORANGE));
+			     values.add(new Segment(sum2/sum*100, 	Phase[2], Color.YELLOW));
+			     values.add(new Segment(sum3/sum*100, 	Phase[3], Color.GREEN));
+			     values.add(new Segment(sum4/sum*100, 	Phase[4], Color.CYAN));
+			     values.add(new Segment(sum5/sum*100, 	Phase[5], Color.BLUE));
+			     values.add(new Segment(sum6/sum*100, Phase[6], Color.PINK));
+			     PieChart pieChart = new PieChart(values, "Pie Chart");
+			     pieChart.setAlignmentX(Component.CENTER_ALIGNMENT);
+			     pieChart.setPreferredSize(new Dimension(800, 600));
+			     
+			     panel_chart1 = new JPanel();
+			     panel_chart1.add(pieChart);
+			     //create a window for piechart
+			     frame1 = new JFrame("Pie Charts");
+			     //frame1.setName("Charts");
+			     frame1.setLayout(new BorderLayout());
+			     frame1.add(panel_chart1,BorderLayout.WEST);
+			     frame1.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			     frame1.setSize(new Dimension(820, 620));
+			     frame1.setResizable(true);
+			     panel_chart1.setPreferredSize(new Dimension(frame1.getWidth()-20, frame1.getHeight()-100));
+			     frame1.pack();
+			     frame1.setVisible(true);
+			     
+			 //add XY charts	     
+			     XYSeries series = new XYSeries("XYGraph");
+			     series.add(1, 1);
+			     series.add(1, 2);
+			     series.add(2, 1);
+			     series.add(3, 9);
+			     series.add(4, 10);
+		
+			  // Add the series to your data set
+			     XYSeriesCollection dataset = new XYSeriesCollection();
+			     dataset.addSeries(series);
+		
+			  // Generate the graph
+			     JFreeChart chart = ChartFactory.createXYLineChart(
+			     "XY Chart", // Title
+			     "x-axis", // x-axis Label
+			     "y-axis", // y-axis Label
+			     dataset, // Dataset
+			     PlotOrientation.VERTICAL, // Plot Orientation
+			     true, // Show Legend
+			     true, // Use tooltips
+			     false // Configure chart to generate URLs?
+			  );
+			     ChartPanel CP = new ChartPanel(chart);
+			     
+			     panel_chart2 = new JPanel();
+			     panel_chart2.add(CP);
+			     //create a window for piechart
+			     frame2 = new JFrame("XY Chart");
+			     frame2.setLayout(new BorderLayout());
+			     frame2.add(panel_chart2, BorderLayout.WEST);
+			     frame2.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			     frame2.setSize(new Dimension(820, 620));
+			     frame2.setResizable(true);
+			     panel_chart1.setPreferredSize(new Dimension(frame2.getWidth()-20, frame2.getHeight()-100));
+			     frame2.pack();
+			     frame2.setVisible(true);
+			}
+		});
+	}
+	
+//create main panel	
+	private JPanel createPanel(String string) {
+	     
+	     panel = new JPanel(true);
+	     panel.setLayout(new BorderLayout(1,1));
+	     JLabel filler = new JLabel(string);
+	     filler.setHorizontalAlignment(JLabel.CENTER);
+	     panel.add(filler);
+	     return panel;
+	  }
+	
+//create subpanels with lables, drop lists and text field 	
+	private JPanel createsubPanel(String string) throws BiffException, IOException {
+
+			panel_m = createPanel(string);
+		 	panel_m.setVisible(true);
+		 	panel_m.setPreferredSize(new Dimension(100, 150));
+		    panel_m.setLayout(new GridBagLayout()); // added code
+		    GridBagConstraints c_sub = new GridBagConstraints();
+		    Dimension d = new Dimension(250,50);
+
+//create label
+		    JLabel lbl = new JLabel();
+		    lbl.setName(string+" L");
+		    c_sub.fill = GridBagConstraints.PAGE_START;
+		    c_sub.weighty = 1;
+		    c_sub.gridx = 0;
+		    c_sub.gridy = 0;
+		    panel_m.add(lbl,c_sub);
+
+//create drop list for database selection
+		    choices = new String[]{ 
+		    		"Select database","0","1", "2", "3", "4","5", "6" 
+		    		};
+
+		    cb = new JComboBox<String>(choices);
+		    cb.setName(string+" CB");
+		    cb.setPreferredSize(d); // added code
+		    c_sub.fill = GridBagConstraints.CENTER;
+		    c_sub.weighty = 1;
+		    c_sub.gridx = 0;
+		    c_sub.gridy = 1;
+		    panel_m.add(cb,c_sub);
+		    
+//create field for user inputs		    		    
+		    field = new JTextField("0");
+		    field.setPreferredSize(d);
+		    c_sub.fill = GridBagConstraints.PAGE_END;
+		    c_sub.gridx = 0;
+		    c_sub.gridy = 2;
+		    panel_m.add(field,c_sub);
+
+		    panel_m.setVisible(true); // added code
+		    return panel_m; 
+ }	
+	
+//add icons	
+	 private ImageIcon createImageIcon(String string) {
+		 URL url = Gui.class.getResource(string);
+	     if(url == null)
+	     {
+	         System.out.println("the image "+string+" is not exist!");
+	         return null;
+	     }
+	     else return new ImageIcon(url);
+	  }
+	 
+	 
+//add action ddbb
+	 private ActionListener createActionListener(int k){
+		 ActionListener ddbb=  new ActionListener() {
+		 
+			@Override
+				public void actionPerformed(ActionEvent db) {
+				String selection = cb_m[k].getSelectedItem().toString();
+				
+				System.out.println(selection);
+				
+				switch (selection) {  //check for a match
+			case "Select database":
+	        	data0 	= "NA";
+	        	data1	= "NA";
+	        	data2	= "NA";
+	        	data3	= "NA";
+	        	data4	= "NA";
+	        	data5	= "NA";
+	        	data6	= "NA";
+	        	break;
+	        	
+	        case "0":
+	        	data0	 = 	content0	[0];
+	        	data1	 = 	c1	[0];
+	        	data2	 = 	c2	[0];
+	        	data3	 = 	c3	[0];
+	        	data4	 = 	c4	[0];
+	        	data5	 = 	c5	[0];
+	        	data6	 = 	c6	[0];
+
+	        	break;		
+	        case "1":
+	        	data0	 = 	content0	[1];
+	        	data1	 = 	c1	[1];
+	        	data2	 = 	c2	[1];
+	        	data3	 = 	c3	[1];
+	        	data4	 = 	c4	[1];
+	        	data5	 = 	c5	[1];
+	        	data6	 = 	c6	[1];
+
+	        	break;		
+	        case "2":
+	        	data0	 = 	content0	[2];
+	        	data1	 = 	c1	[2];
+	        	data2	 = 	c2	[2];
+	        	data3	 = 	c3	[2];
+	        	data4	 = 	c4	[2];
+	        	data5	 = 	c5	[2];
+	        	data6	 = 	c6	[2];
+
+	        	break;		
+	        case "3":
+	        	data0	 = 	content0	[3];
+	        	data1	 = 	c1	[3];
+	        	data2	 = 	c2	[3];
+	        	data3	 = 	c3	[3];
+	        	data4	 = 	c4	[3];
+	        	data5	 = 	c5	[3];
+	        	data6	 = 	c6	[3];
+
+	        	break;		
+	        case "4":
+	        	data0	 = 	content0	[4];
+	        	data1	 = 	c1	[4];
+	        	data2	 = 	c2	[4];
+	        	data3	 = 	c3	[4];
+	        	data4	 = 	c4	[4];
+	        	data5	 = 	c5	[4];
+	        	data6	 = 	c6	[4];
+
+	        	break;		
+	        case "5":
+	        	data0	 = 	content0	[5];
+	        	data1	 = 	c1	[5];
+	        	data2	 = 	c2	[5];
+	        	data3	 = 	c3	[5];
+	        	data4	 = 	c4	[5];
+	        	data5	 = 	c5	[5];
+	        	data6	 = 	c6	[5];
+
+	        	break;		
+	        case "6":
+	        	data0	 = 	content0	[6];
+	        	data1	 = 	c1	[6];
+	        	data2	 = 	c2	[6];
+	        	data3	 = 	c3	[6];
+	        	data4	 = 	c4	[6];
+	        	data5	 = 	c5	[6];
+	        	data6	 = 	c6	[6];
+
+	        	break;		
+				}	
+				
+				//System.out.println(data1);
+				Object[] columnNames = {
+						"Type", "Value", "Unit",
+	                   };
+	//add database here				     
+			      data = new Object[][]{
+			    		    {"Distance", data0, "km"},
+			    		    {"Distance", data1, "km"},
+			    		    {"Distance", data2, "km"},
+			    		    {"Distance", data3, "km"},
+			    		    {"Distance", data4, "km"},
+			    		    {"Distance", data5, "km"},
+			    		    {"Distance", data6, "km"},
+			    		    };
+			      DTM = new DefaultTableModel(data, columnNames);
+				 JTable[] table_db1 = new JTable[length];
+				 
+			      table_db1 [k] = new JTable(DTM);
+				 //table_db1.setModel(dataModel);
+				// table_db2 = new JTable(DTM);
+			     			    
+			     JScrollPane sp_db1 = new JScrollPane(table_db1[k]);
+			     //JScrollPane sp_db2 = new JScrollPane(table_db2);
+			     
+			     JLabel label_db1 = new JLabel("Cost Impact");
+			     label_db1.setSize(new Dimension (10,10));
+			     //JLabel label_db2 = new JLabel("Environment Impact");
+			     //label_db2.setSize(new Dimension (10,10));
+			     
+//			     DefaultTableModel dtm = (DefaultTableModel) table_db1.getModel();
+//			     int nRow = dtm.getRowCount(), nCol = dtm.getColumnCount();
+//			     tableData = new Object[nRow][nCol];
+//			     for (int i = 0 ; i < nRow ; i++)
+//			         for (int j = 0 ; j < nCol ; j++)
+//			             tableData[i][j] = dtm.getValueAt(i,j);
+//			     data_m[0]=(String) data[0][1];
+//			     data_m[1]=(String) data[1][1];
+//			     data_m[2]=(String) data[2][1];
+//			     data_m[3]=(String) data[3][1];
+//			     data_m[4]=(String) data[4][1];
+//			     data_m[5]=(String) data[5][1];
+//			     data_m[6]=(String) data[6][1];
+//			     
+//			     data_mm[0][k]=data_m[0];
+//			     data_mm[1][k]=data_m[1];
+//			     data_mm[2][k]=data_m[2];
+//			     data_mm[3][k]=data_m[3];
+//			     data_mm[4][k]=data_m[4];
+//			     data_mm[5][k]=data_m[5];
+//			     data_mm[6][k]=data_m[6];
+			     
+			    // data_mm[0][k] = (String) table_db1.getModel().getValueAt(0, 1);
+			     
+			     
+				 panel_db = new JPanel();
+				 panel_db.setLayout(new BoxLayout(panel_db,BoxLayout.Y_AXIS));
+			     panel_db.setName("database"+selection);
+			     panel_db.add(label_db1);
+			     label_db1.setAlignmentX(Component.CENTER_ALIGNMENT);
+			     panel_db.add(sp_db1);
+			     table_db1[k].setAlignmentX(Component.CENTER_ALIGNMENT);
+//			     panel_db.add(label_db2);
+//			     label_db2.setAlignmentX(Component.CENTER_ALIGNMENT);
+//			     panel_db.add(sp_db2);
+//			     table_db2.setAlignmentX(Component.CENTER_ALIGNMENT);
+			     
+			    
+			   //add button	  
+			     JButton[] updateButton = new JButton[length];
+			     updateButton[k] = new JButton("Update");
+			     //updateButton[k].setName("Update");
+			     updateButton[k].setAlignmentX(Component.CENTER_ALIGNMENT);
+			     panel_db.add(updateButton[k]);
+
+		//add action for clicking button	     
+			     updateButton[k].addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						TableModel DTM2 = table_db1[k].getModel();
+						data_mm[0][k]=(String) DTM2.getValueAt(0, 1);
+					    data_mm[1][k]=(String) DTM2.getValueAt(1, 1);
+					    data_mm[2][k]=(String) DTM2.getValueAt(2, 1);
+					    data_mm[3][k]=(String) DTM2.getValueAt(3, 1);
+					    data_mm[4][k]=(String) DTM2.getValueAt(4, 1);
+					    data_mm[5][k]=(String) DTM2.getValueAt(5, 1);
+					    data_mm[6][k]=(String) DTM2.getValueAt(6, 1);	
+					    
+					    System.out.println(DTM2.getValueAt(1, 1) );
+					}
+					});
+			     //create a window for db
+			     frame_db = new JFrame("database"+selection);
+			     frame_db.setLayout(new BorderLayout());
+			     frame_db.add(panel_db,BorderLayout.WEST);
+			     frame_db.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			     frame_db.setSize(new Dimension(820, 620));
+			     frame_db.setResizable(true);
+			     panel_db.setPreferredSize(new Dimension(frame_db.getWidth()-350, frame_db.getHeight()-400));
+			     frame_db.pack();
+			     frame_db.setVisible(true);
+			
+				}
+				};
+	return ddbb;
+	 }
+	 
+//main function
+//main function to run to show GUI	 
+	public static void main(String[] args) {
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+            try {
+				createAndShowGUI();
+			} catch (BiffException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            }
+            }
+		);
+	}
+	
+//create frame
+	private static void createAndShowGUI() throws BiffException, IOException {
+	//Create and set up the window.
+    frame = new JFrame("SHIPLYS");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(screenSize);
+    
+    //Create and set up the content pane.
+    JComponent newContentPane = new Gui();
+    frame.setLayout(new BorderLayout());
+    frame.add(newContentPane,BorderLayout.WEST);
+    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    frame.setResizable(true);
+    panel0.setPreferredSize(new Dimension(frame.getWidth()-20, frame.getHeight()-100));
+
+    //Display the window.
+    frame.pack();
+    frame.setVisible(true);
+    }
+}
